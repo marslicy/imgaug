@@ -767,7 +767,7 @@ class Augmenter(object):
             "Expected to get a single numpy array of shape (H,W) or (H,W,C) "
             "for `image`. Got instead type %d. Use `augment_images(images)` "
             "to augment a list of multiple images." % (
-                type(image).__name__),)
+                type(image).__name__))
         assert image.ndim in [2, 3], (
             "Expected image to have shape (height, width, [channels]), "
             "got shape %s." % (image.shape,))
@@ -3384,7 +3384,7 @@ class SomeOf(Augmenter, list):
         # pylint: disable=invalid-name
         nn = self._get_n(nb_rows, random_state)
         nn = [min(n, len(self)) for n in nn]
-        augmenter_active = np.zeros((nb_rows, len(self)), dtype=np.bool)
+        augmenter_active = np.zeros((nb_rows, len(self)), dtype=bool)
         for row_idx, n_true in enumerate(nn):
             if n_true > 0:
                 augmenter_active[row_idx, 0:n_true] = 1
