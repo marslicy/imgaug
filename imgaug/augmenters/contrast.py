@@ -17,7 +17,10 @@ from __future__ import print_function, division, absolute_import
 
 import numpy as np
 import six.moves as sm
-import skimage.exposure as ski_exposure
+#import scipy.spatial.distance
+from ..lazyimport import LazyImport
+skimage = LazyImport('skimage', as_='skimage')
+#import skimage.exposure as ski_exposure
 import cv2
 
 import imgaug as ia
@@ -171,7 +174,7 @@ def adjust_contrast_gamma(arr, gamma):
         table = np.clip(table, min_value, max_value).astype(arr.dtype)
         arr_aug = ia.apply_lut(arr, table)
         return arr_aug
-    return ski_exposure.adjust_gamma(arr, gamma)
+    return skimage.exposure.adjust_gamma(arr, gamma)
 
 
 # TODO quite similar to the other adjust_contrast_*() functions, make DRY
@@ -257,7 +260,7 @@ def adjust_contrast_sigmoid(arr, gain, cutoff):
         table = np.clip(table, min_value, max_value).astype(arr.dtype)
         arr_aug = ia.apply_lut(arr, table)
         return arr_aug
-    return ski_exposure.adjust_sigmoid(arr, cutoff=cutoff, gain=gain)
+    return skimage.exposure.adjust_sigmoid(arr, cutoff=cutoff, gain=gain)
 
 
 # TODO quite similar to the other adjust_contrast_*() functions, make DRY
@@ -339,7 +342,7 @@ def adjust_contrast_log(arr, gain):
         table = np.clip(table, min_value, max_value).astype(arr.dtype)
         arr_aug = ia.apply_lut(arr, table)
         return arr_aug
-    return ski_exposure.adjust_log(arr, gain=gain)
+    return skimage.exposure.adjust_log(arr, gain=gain)
 
 
 # TODO quite similar to the other adjust_contrast_*() functions, make DRY

@@ -5,10 +5,13 @@ import traceback
 import collections
 
 import numpy as np
-import scipy.spatial.distance
+#import scipy.spatial.distance
+from ..lazyimport import LazyImport
+scipy = LazyImport('scipy', as_='scipy')
 import six.moves as sm
-import skimage.draw
-import skimage.measure
+skimage = LazyImport('skimage', as_='skimage')
+#import skimage.draw
+#import skimage.measure
 
 from .. import imgaug as ia
 from .. import random as iarandom
@@ -950,7 +953,7 @@ class Polygon(object):
         rr_face, cc_face = skimage.draw.polygon(
             yy_mask, xx_mask, shape=(height_mask, width_mask))
 
-        mask = np.zeros((height_mask, width_mask), dtype=np.bool)
+        mask = np.zeros((height_mask, width_mask), dtype=bool)
         mask[rr_face, cc_face] = True
 
         if image.ndim == 3:

@@ -18,8 +18,10 @@ import numpy as np
 # use skimage.segmentation instead `from skimage import segmentation` here,
 # because otherwise unittest seems to mix up imgaug.augmenters.segmentation
 # with skimage.segmentation for whatever reason
-import skimage.segmentation
-import skimage.measure
+from ..lazyimport import LazyImport
+skimage = LazyImport('skimage', as_='skimage')
+#import skimage.segmentation
+#import skimage.measure
 import six
 import six.moves as sm
 
@@ -31,10 +33,7 @@ from .. import dtypes as iadt
 from ..imgaug import _NUMBA_INSTALLED, _numbajit
 
 
-_SLIC_SUPPORTS_START_LABEL = (
-    tuple(map(int, skimage.__version__.split(".")[0:2]))
-    >= (0, 17)
-)  # Added in 0.5.0.
+_SLIC_SUPPORTS_START_LABEL = True # skimage Added in 0.5.0.
 
 
 # TODO merge this into imresize?

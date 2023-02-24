@@ -73,7 +73,9 @@ import warnings
 
 import six.moves as sm
 import numpy as np
-import skimage.filters
+#import scipy.spatial.distance
+from ..lazyimport import LazyImport
+skimage = LazyImport('skimage', as_='skimage')
 
 import imgaug as ia
 from ..imgaug import _numbajit

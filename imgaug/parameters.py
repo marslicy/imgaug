@@ -16,8 +16,9 @@ from operator import mul as mul_op
 import numpy as np
 import six
 import six.moves as sm
-import scipy
-import scipy.stats
+#import scipy.spatial.distance
+from .lazyimport import LazyImport
+scipy = LazyImport('scipy', as_='scipy')
 import imageio
 import cv2
 

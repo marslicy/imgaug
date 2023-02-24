@@ -17,8 +17,8 @@ import numpy as np
 import cv2
 import six
 import six.moves as sm
-import skimage.draw
-import skimage.measure
+from .lazyimport import LazyImport
+skimage = LazyImport('skimage', as_='skimage')
 try:
     import numba
 except ImportError:

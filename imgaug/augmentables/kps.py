@@ -2,7 +2,9 @@
 from __future__ import print_function, division, absolute_import
 
 import numpy as np
-import scipy.spatial.distance
+#import scipy.spatial.distance
+from ..lazyimport import LazyImport
+scipy = LazyImport('scipy', as_='scipy')
 import six.moves as sm
 
 from .. import imgaug as ia

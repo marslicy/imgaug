@@ -10,11 +10,11 @@ maps in a variety of different ways."""
 
 INSTALL_REQUIRES = [
     "six",
-    "numpy>=1.15",
+    "numpy>=1.20",
     "scipy",
     "Pillow",
     "matplotlib",
-    "scikit-image>=0.14.2",
+    "scikit-image>=0.18",
     "opencv-python-headless",
     "imageio<=2.6.1; python_version<'3.5'",
     "imageio; python_version>='3.5'",
@@ -57,12 +57,12 @@ def get_install_requirements(main_requires, alternative_requires):
 INSTALL_REQUIRES = get_install_requirements(INSTALL_REQUIRES, ALT_INSTALL_REQUIRES)
 
 setup(
-    name="imgaug",
-    version="0.4.0",
-    author="Alexander Jung",
-    author_email="kontakt@ajung.name",
-    url="https://github.com/aleju/imgaug",
-    download_url="https://github.com/aleju/imgaug/archive/0.4.0.tar.gz",
+    name="imgaug3",
+    version="0.4.1",
+    author="Nick Setzer",
+    author_email="nicksetzer@gmail.com",
+    url="https://github.com/nsetzer/imgaug",
+    download_url="https://github.com/nsetzer/imgaug/archive/0.4.1.tar.gz",
     install_requires=INSTALL_REQUIRES,
     packages=find_packages(),
     include_package_data=True,

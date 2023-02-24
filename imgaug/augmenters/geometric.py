@@ -26,8 +26,13 @@ import functools
 import itertools
 
 import numpy as np
-from scipy import ndimage
-from skimage import transform as tf
+#import scipy.spatial.distance
+from ..lazyimport import LazyImport
+scipy = LazyImport('scipy', as_='scipy')
+import six.moves as sm
+skimage = LazyImport('skimage', as_='skimage')
+#import skimage.draw
+#import skimage.measure
 import cv2
 import six.moves as sm
 
@@ -231,13 +236,13 @@ def _warp_affine_arr_skimage(arr, matrix, cval, mode, order, output_shape):
 
     input_dtype = arr.dtype
 
-    # tf.warp() produces a deprecation warning for bool images with
+    # skimage.transform.warp() produces a deprecation warning for bool images with
     # order!=0. We either need to convert them to float or use NN
     # interpolation.
     if input_dtype == iadt._BOOL_DTYPE and order != 0:
         arr = arr.astype(np.float32)
 
-    image_warped = tf.warp(
+    image_warped = skimage.transform.warp(
         arr,
         np.linalg.inv(matrix),
         order=order,
@@ -247,7 +252,7 @@ def _warp_affine_arr_skimage(arr, matrix, cval, mode, order, output_shape):
         output_shape=output_shape,
     )
 
-    # tf.warp changes all dtypes to float64, including uint8
+    # skimage.transform.warp changes all dtypes to float64, including uint8
     if input_dtype.kind == "b":
         image_warped = image_warped > 0.5
     else:
@@ -1463,13 +1468,13 @@ class Affine(meta.Augmenter):
                             # to_xy_array() does not.
                             kpsoi = cbaoi.to_keypoints_on_image()
                             coords = kpsoi.to_xy_array()
-                            coords_aug = tf.matrix_transform(coords, matrix)
+                            coords_aug = skimage.transform.matrix_transform(coords, matrix)
                             kpsoi = kpsoi.fill_from_xy_array_(coords_aug)
                             cbaoi = cbaoi.invert_to_keypoints_on_image_(
                                 kpsoi)
                         else:
                             coords = cbaoi.to_xy_array()
-                            coords_aug = tf.matrix_transform(coords, matrix)
+                            coords_aug = skimage.transform.matrix_transform(coords, matrix)
                             cbaoi = cbaoi.fill_from_xy_array_(coords_aug)
 
                     cbaoi.shape = output_shape
@@ -2741,15 +2746,15 @@ class AffineCv2(meta.Augmenter):
             )
 
             if any_change:
-                matrix_to_topleft = tf.SimilarityTransform(
+                matrix_to_topleft = skimage.transform.SimilarityTransform(
                     translation=[-shift_x, -shift_y])
-                matrix_transforms = tf.AffineTransform(
+                matrix_transforms = skimage.transform.AffineTransform(
                     scale=(scale_x, scale_y),
                     translation=(translate_x_px, translate_y_px),
                     rotation=math.radians(rotate),
                     shear=math.radians(shear)
                 )
-                matrix_to_center = tf.SimilarityTransform(
+                matrix_to_center = skimage.transform.SimilarityTransform(
                     translation=[shift_x, shift_y])
                 matrix = (matrix_to_topleft
                           + matrix_transforms
@@ -2846,22 +2851,22 @@ class AffineCv2(meta.Augmenter):
             )
 
             if any_change:
-                matrix_to_topleft = tf.SimilarityTransform(
+                matrix_to_topleft = skimage.transform.SimilarityTransform(
                     translation=[-shift_x, -shift_y])
-                matrix_transforms = tf.AffineTransform(
+                matrix_transforms = skimage.transform.AffineTransform(
                     scale=(scale_x, scale_y),
                     translation=(translate_x_px, translate_y_px),
                     rotation=math.radians(rotate),
                     shear=math.radians(shear)
                 )
-                matrix_to_center = tf.SimilarityTransform(
+                matrix_to_center = skimage.transform.SimilarityTransform(
                     translation=[shift_x, shift_y])
                 matrix = (matrix_to_topleft
                           + matrix_transforms
                           + matrix_to_center)
 
                 coords = keypoints_on_image.to_xy_array()
-                coords_aug = tf.matrix_transform(coords, matrix.params)
+                coords_aug = skimage.transform.matrix_transform(coords, matrix.params)
                 kps_new = [kp.deepcopy(x=coords[0], y=coords[1])
                            for kp, coords
                            in zip(keypoints_on_image.keypoints, coords_aug)]
@@ -3204,7 +3209,7 @@ class PiecewiseAffine(meta.Augmenter):
                 if image.dtype.kind == "b":
                     image = image.astype(np.float64)
 
-                image_warped = tf.warp(
+                image_warped = skimage.transform.warp(
                     image,
                     transformer,
                     order=samples.order[i],
@@ -3239,7 +3244,7 @@ class PiecewiseAffine(meta.Augmenter):
                 samples.nb_cols[i], samples.jitter[i])
 
             if transformer is not None:
-                arr_warped = tf.warp(
+                arr_warped = skimage.transform.warp(
                     arr,
                     transformer,
                     order=order if order is not None else samples.order[i],
@@ -3309,7 +3314,7 @@ class PiecewiseAffine(meta.Augmenter):
                 # Much slower than directly augmenting the coordinates, but
                 # here the only method that reliably works.
                 dist_maps = kpsoi.to_distance_maps(inverted=True)
-                dist_maps_warped = tf.warp(
+                dist_maps_warped = skimage.transform.warp(
                     dist_maps,
                     transformer,
                     order=1,
@@ -3428,7 +3433,7 @@ class PiecewiseAffine(meta.Augmenter):
             points_dest[:, 1] = np.clip(points_dest[:, 1],
                                         0, augmentable_shape[1]-1)
 
-            # tf.warp() results in qhull error if the points are identical,
+            # skimage.transform.warp() results in qhull error if the points are identical,
             # which is mainly the case if any axis is 0
             has_low_axis = any([axis <= 1 for axis in augmentable_shape[0:2]])
             has_zero_channels = (
@@ -3448,7 +3453,7 @@ class PiecewiseAffine(meta.Augmenter):
             if has_low_axis or has_zero_channels:
                 return None
             else:
-                matrix = tf.PiecewiseAffineTransform()
+                matrix = skimage.transform.PiecewiseAffineTransform()
                 matrix.estimate(points_src[:, ::-1], points_dest[:, ::-1])
                 return matrix
 
@@ -4789,7 +4794,7 @@ class ElasticTransformation(meta.Augmenter):
             result = np.empty_like(image)
 
             for c in sm.xrange(image.shape[2]):
-                remapped_flat = ndimage.interpolation.map_coordinates(
+                remapped_flat = scipy.ndimage.interpolation.map_coordinates(
                     image[..., c],
                     (y_shifted.flatten(), x_shifted.flatten()),
                     order=order,

@@ -4,8 +4,10 @@ from __future__ import print_function, division, absolute_import
 import copy as copylib
 
 import numpy as np
-import skimage.draw
-import skimage.measure
+from ..lazyimport import LazyImport
+skimage = LazyImport('skimage', as_='skimage')
+#import skimage.draw
+#import skimage.measure
 import cv2
 
 from .. import imgaug as ia

@@ -14,7 +14,9 @@ List of augmenters:
 from __future__ import print_function, division, absolute_import
 
 import numpy as np
-from scipy import ndimage
+#from scipy import ndimage
+from ..lazyimport import LazyImport
+scipy = LazyImport('scipy', as_='scipy')
 import cv2
 import six.moves as sm
 
@@ -222,12 +224,12 @@ def _blur_gaussian_scipy_(image, sigma, ksize):
     # the blurring would also happen across channels (e.g. red values
     # might be mixed with blue values in RGB)
     if image.ndim == 2:
-        image[:, :] = ndimage.gaussian_filter(image[:, :], sigma,
+        image[:, :] = scipy.ndimage.gaussian_filter(image[:, :], sigma,
                                               mode="mirror")
     else:
         nb_channels = image.shape[2]
         for channel in sm.xrange(nb_channels):
-            image[:, :, channel] = ndimage.gaussian_filter(
+            image[:, :, channel] = scipy.ndimage.gaussian_filter(
                 image[:, :, channel], sigma, mode="mirror")
 
     if dtype.kind == "b":

@@ -4,8 +4,10 @@ from __future__ import print_function, division, absolute_import
 import copy
 
 import numpy as np
-import skimage.draw
-import skimage.measure
+from ..lazyimport import LazyImport
+skimage = LazyImport('skimage', as_='skimage')
+#import skimage.draw
+#import skimage.measure
 
 from .. import imgaug as ia
 from .base import IAugmentable
