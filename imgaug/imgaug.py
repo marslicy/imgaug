@@ -33,12 +33,6 @@ DEFAULT_FONT_FP = os.path.join(
 )
 
 
-# to check if a dtype instance is among these dtypes, use e.g.
-# `dtype.type in  NP_FLOAT_TYPES` do not just use `dtype in NP_FLOAT_TYPES` as
-# that would fail
-NP_FLOAT_TYPES = set(np.sctypes["float"])
-NP_INT_TYPES = set(np.sctypes["int"])
-NP_UINT_TYPES = set(np.sctypes["uint"])
 
 IMSHOW_BACKEND_DEFAULT = "matplotlib"
 

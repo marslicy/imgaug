@@ -486,8 +486,8 @@ def force_np_float_dtype(val):
 
 def both_np_float_if_one_is_float(a, b):
     # pylint: disable=invalid-name
-    a_f = a.dtype.type in ia.NP_FLOAT_TYPES
-    b_f = b.dtype.type in ia.NP_FLOAT_TYPES
+    a_f = np.issubdtype(a.dtype.type, np.floating)
+    b_f = np.issubdtype(b.dtype.type, np.floating)
     if a_f and b_f:
         return a, b
     if a_f:
